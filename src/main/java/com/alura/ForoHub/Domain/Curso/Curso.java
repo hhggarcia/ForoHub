@@ -2,6 +2,7 @@ package com.alura.ForoHub.Domain.Curso;
 
 import com.alura.ForoHub.Domain.Topico.Topico;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,4 +27,9 @@ public class Curso {
     @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Topico> topicos;
 
+    public Curso(@Valid DatosCurso datos){
+        this.nombre = datos.nombre();
+        this.categoria = datos.categoria();
+        this.activo = true;
+    }
 }

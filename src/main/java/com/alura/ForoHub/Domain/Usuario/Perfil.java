@@ -1,6 +1,8 @@
 package com.alura.ForoHub.Domain.Usuario;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,5 +29,11 @@ public class Perfil {
             joinColumns = @JoinColumn(name = "idPerfil"),
             inverseJoinColumns = @JoinColumn(name = "idUsuario")
     )
+    @JsonBackReference
     private List<Usuario> usuarios;
+
+    public Perfil(@Valid DatosPerfil datos) {
+        this.nombre = datos.nombre();
+        this.activo = true;
+    }
 }
