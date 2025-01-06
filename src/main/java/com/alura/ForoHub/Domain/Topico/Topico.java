@@ -51,4 +51,13 @@ public class Topico {
         this.autor = usuario;
         this.activo = true;
     }
+
+    public void actualizarTopico(@Valid DatosTopico datos){
+        this.titulo = datos.titulo();
+        this.mensaje = datos.mensaje();
+    }
+
+    public void desactivarTopico() {
+        this.activo = false;
+    }
 }

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,6 +38,23 @@ public class TopicoController {
     public ResponseEntity<Page<DatosListadoTopico>> listarTopicos(Pageable paginacion){
         return ResponseEntity.ok(topicoRepository.findByActivoTrue(paginacion)
                 .map(DatosListadoTopico::new));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> detalleTopico(@PathVariable Long id){
+        Optional<Topico> isTopico = topicoRepository.findById(id);
+        if (!isTopico.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeError("Topico no existe"));
+        }
+        Topico topico = isTopico.get();
+
+        DatosListadoTopico datosRespuesta = new DatosListadoTopico(topico.getId(),
+                topico.getTitulo(),
+                topico.getMensaje(),
+                topico.getFechaCreacion(),
+                new DatosListadoCurso(topico.getCurso()));
+
+        return ResponseEntity.ok(datosRespuesta);
     }
 
     @PostMapping
@@ -66,5 +84,37 @@ public class TopicoController {
         URI url = uriComponentsBuilder.path("topicos/{id}").buildAndExpand(topico.getId()).toUri();
 
         return ResponseEntity.created(url).body(datosRespuesta);
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> actualizarTopico(@PathVariable Long id,
+                                              @RequestBody @Valid DatosTopico datos,
+                                              UriComponentsBuilder uriComponentsBuilder){
+        Optional<Topico> isTopico = topicoRepository.findById(id);
+        if (!isTopico.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensajeError("Topico no existe"));
+        }
+
+        Topico topico = isTopico.get();
+        topico.actualizarTopico(datos);
+
+        DatosListadoTopico datosRespuesta = new DatosListadoTopico(topico.getId(),
+                topico.getTitulo(),
+                topico.getMensaje(),
+                topico.getFechaCreacion(),
+                new DatosListadoCurso(topico.getCurso()));
+
+        URI url = uriComponentsBuilder.path("topicos/{id}").buildAndExpand(topico.getId()).toUri();
+
+        return ResponseEntity.created(url).body(datosRespuesta);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity eliminarTopico(@PathVariable Long id){
+        Topico topico = topicoRepository.getReferenceById(id);
+        topico.desactivarTopico();
+        return ResponseEntity.noContent().build();
     }
 }
