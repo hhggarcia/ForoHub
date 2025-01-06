@@ -40,7 +40,7 @@ public class UsuarioController {
         DatosListadoUsuarios datosRespuesta = new DatosListadoUsuarios(creadoUsuario.getIdUsuario(),
                 creadoUsuario.getNombre(),
                 creadoUsuario.getEmail(),
-                creadoUsuario.getPerfiles());
+                creadoUsuario.getPerfiles().stream().map(DatosListadoPerfil::new).toList());
 
         URI url = uriComponentsBuilder.path("usuarios/{id}").buildAndExpand(creadoUsuario.getIdUsuario()).toUri();
 

@@ -1,6 +1,8 @@
 package com.alura.ForoHub.Domain.Curso;
 
 import com.alura.ForoHub.Domain.Topico.Topico;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
